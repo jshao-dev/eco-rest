@@ -8,6 +8,7 @@ var defaulThenCatch = function(promise, res){
             res.send(result);
         })
         .catch(function(err){
+            res.statusCode = 500;
             res.send(err);
         });
 }
