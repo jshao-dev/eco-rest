@@ -3,3 +3,41 @@ extends layout
 block content
   h1= title
   p Welcome to #{title}
+  h2 APIs
+  h3 Data APIs
+  ul
+    li
+      a(href="/data/") /data/
+      |  [GET] get all package list.
+    li
+      a(href="/data/name") /data/:name/:version
+      |  [GET] get the latest package.
+    li
+      a(href="/data/name/version") /data/:name/:version
+      |  [GET, PUT, DELETE] get, create, or delete a package in specific version.
+
+  h3 Use APIs
+  div
+    a(href="/use/") /use/:name1[@version]/:name2[@version]/.../:nameN[@version]?format=:converter
+  | [GET] Merge packages in specified order, and get the result.
+  | If versions are not specified, the latest one will be used.
+  | Values from right hand side packages will override the left hand side ones, if the keys are duplicate.
+  | supported converters
+  ul
+    li node
+    li rb
+    li ps1
+    li bat
+    li bash
+
+  h3 Installation
+  ul
+    li
+      h4 Windows
+      a(href="/install.windows") /install.windows
+      |  is the script to install on Windows server.
+      | Run below PowerShell script to install eco on Windows machines.
+      div iex ((new-object net.webclient).DownloadString('http://$url/install.windows'))
+    li
+      h4 Linux
+      | TODO.
