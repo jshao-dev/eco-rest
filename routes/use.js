@@ -36,6 +36,7 @@ router.get('/*', function(req, res, next) {
             res.send(merged);
         })
         .catch(function(err){
+            res.statusCode = 500;
             res.send(err);
         });
 });
