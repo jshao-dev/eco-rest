@@ -1,0 +1,50 @@
+$ecoCliHome = "$env:USERPROFILE\Documents\WindowsPowerShell\Modules\eco"
+$batchHome = "$ecoCliHome\ecouse.bat"
+$moduleHome = "$ecoCliHome\eco.psm1"
+
+new-item $moduleHome -ItemType file -Force | out-null
+
+# Create powershell module script file
+@"
+function eco(){
+    [string]`$url = "http://10.67.29.129:3000/use/`$(`$args -join "/")/?format=ps1"
+    [string]`$script = (new-object net.webclient).DownloadString(`$url)
+    iex `$script
+}
+Export-ModuleMember -Function eco
+"@ | out-file $moduleHome -Force utf8
+
+# Creates batch script
+$batScript = @"
+@echo off
+
+:GETTEMPNAME
+set ECO_ENV_VAR_BAT_FILE=%TMP%\eco_env_var-%RANDOM%-%TIME:~6,5%.tmp.bat
+if exist "%ECO_ENV_VAR_BAT_FILE%" GOTO :GETTEMPNAME
+
+setlocal
+set ECO_URL_USE=http://10.67.29.129:3000/use
+:again
+if \{%1\}==\{\} goto :path_done
+set ECO_URL_USE=%ECO_URL_USE%/%1
+shift
+goto again
+:path_done
+set ECO_URL_USE=%ECO_URL_USE%/?format=bat
+
+powershell -ExecutionPolicy Bypass -Command "(new-object net.webclient).DownloadString('%ECO_URL_USE%')" > %ECO_ENV_VAR_BAT_FILE%
+
+endlocal
+call %ECO_ENV_VAR_BAT_FILE%
+
+del %ECO_ENV_VAR_BAT_FILE%
+set ECO_ENV_VAR_BAT_FILE=
+@echo on
+"@
+[System.IO.File]::WriteAllText($batchHome, $batScript)
+
+
+$user_path = [environment]::GetEnvironmentVariable("PATH","User")
+if(-not ($user_path -like "*;$ecoCliHome*")){
+    [environment]::SetEnvironmentVariable("PATH", "$user_path;$ecoCliHome", "User")
+}
