@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "ECO_MONGODB_URL=mongodb://192.168.99.100:27017/eco node ./bin/www"
+    "start": "ECO_MONGODB_URL=mongodb://su:password@ds045089.mongolab.com:45089/testdb node ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.13.2",
